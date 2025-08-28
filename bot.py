@@ -84,6 +84,9 @@ for response in client.bots.stream_incoming_events():
     print(response)
     if response.get("type") == "challenge":
         game_id = response['challenge']['id']
+        if response['challenge']['rated'] == True:
+            client.bots.decline_challenge(game_id, 'rated')
+            sys.exit()
         color = invert_color(response['challenge']['finalColor'])
         client.bots.accept_challenge(game_id)
         speed = response['challenge']['speed']
