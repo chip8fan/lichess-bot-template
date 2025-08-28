@@ -132,14 +132,20 @@ for response in client.bots.stream_game_state(game_id):
     if response.get("type") == "gameState":
         if color == "black":
             if time_remaining != 'unlimited':
-                time_remaining = (response['btime'].hour*3600)+(response['btime'].minute*60)+(response['btime'].second)
-                if speed == 'correspondence':
-                    time_remaining += response['btime'].day*86400
+                try:
+                    time_remaining = (response['btime'].hour*3600)+(response['btime'].minute*60)+(response['btime'].second)
+                    if speed == 'correspondence':
+                        time_remaining += response['btime'].day*86400
+                except AttributeError:
+                    time_remaining = response['btime'].total_seconds()
         elif color == "white":
             if time_remaining != 'unlimited':
-                time_remaining = (response['wtime'].hour*3600)+(response['wtime'].minute*60)+(response['wtime'].second)
-                if speed == 'correspondence':
-                    time_remaining += response['wtime'].day*86400
+                try:
+                    time_remaining = (response['wtime'].hour*3600)+(response['wtime'].minute*60)+(response['wtime'].second)
+                    if speed == 'correspondence':
+                        time_remaining += response['wtime'].day*86400
+                except AttributeError:
+                    time_remaining = response['wtime'].total_seconds()
         count = not_empty(str(response['moves']).split(' '))
         bot_turn = (count%2==1 and color=="black") or (count%2==0 and color=="white")
         if bot_turn:
